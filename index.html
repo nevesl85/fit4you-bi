@@ -1,0 +1,76 @@
+<!DOCTYPE html><html lang="pt-BR"><head><meta charset="utf-8"><meta name="viewport" content="width=device-width,initial-scale=1">
+<title>Fit4You — Painel de Inteligencia (protegido)</title>
+<script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
+<script src="https://cdnjs.cloudflare.com/ajax/libs/crypto-js/4.1.1/crypto-js.min.js"></script>
+<style>
+:root{--brand:#AC6C4C;--brand2:#C88A63;--b3:#D9A87F;--dark:#5B3A29;--bg:#FAF6F2;--card:#fff;--line:#EADFD5;--muted:#8A6C58}
+*{box-sizing:border-box;margin:0;padding:0}body{font-family:'Segoe UI',Roboto,Arial,sans-serif;background:var(--bg);color:#2b2b2b}
+#gate{position:fixed;inset:0;background:linear-gradient(135deg,#AC6C4C,#5B3A29);display:flex;align-items:center;justify-content:center;z-index:99}
+#gate .box{background:#fff;border-radius:16px;padding:34px 30px;width:340px;text-align:center;box-shadow:0 10px 40px rgba(0,0,0,.25)}
+#gate .logo{width:60px;height:60px;border-radius:50%;background:var(--brand);color:#fff;display:flex;align-items:center;justify-content:center;font-weight:800;font-size:22px;font-style:italic;margin:0 auto 14px}
+#gate h2{color:var(--dark);font-size:18px;margin-bottom:6px}#gate p{color:var(--muted);font-size:13px;margin-bottom:16px}
+#gate input{width:100%;padding:11px 12px;border:1px solid var(--line);border-radius:10px;font-size:15px;margin-bottom:10px}
+#gate button{width:100%;padding:11px;border:0;border-radius:10px;background:var(--brand);color:#fff;font-weight:700;font-size:15px;cursor:pointer}
+#gate .err{color:#c0392b;font-size:13px;height:18px;margin-top:8px}
+.wrap{max-width:1200px;margin:0 auto;padding:28px 22px 60px}
+header{display:flex;align-items:center;gap:16px;margin-bottom:6px}
+.logo{width:56px;height:56px;border-radius:50%;background:var(--brand);color:#fff;display:flex;align-items:center;justify-content:center;font-weight:800;font-size:20px;font-style:italic}
+h1{font-size:24px;color:var(--dark)}.sub{color:var(--muted);font-size:13px;margin-top:2px}
+.section-title{color:var(--dark);font-size:16px;font-weight:700;margin:30px 0 12px;padding-left:10px;border-left:4px solid var(--brand)}
+.kpis{display:grid;grid-template-columns:repeat(4,1fr);gap:14px;margin-top:18px}
+.kpi{background:var(--card);border:1px solid var(--line);border-radius:14px;padding:16px 18px}
+.kpi .l{color:var(--muted);font-size:12px;font-weight:600;text-transform:uppercase}.kpi .v{color:var(--dark);font-size:24px;font-weight:800;margin-top:6px}.kpi .s{color:var(--brand);font-size:12px;margin-top:2px}
+.grid2{display:grid;grid-template-columns:1fr 1fr;gap:16px}
+.card{background:var(--card);border:1px solid var(--line);border-radius:14px;padding:18px}
+.card h3{color:var(--dark);font-size:14px;margin-bottom:14px}
+table{width:100%;border-collapse:collapse;font-size:13px}th{background:var(--brand);color:#fff;text-align:left;padding:8px 10px}td{padding:7px 10px;border-bottom:1px solid var(--line)}tr:nth-child(even) td{background:#FBF6F1}
+.tag{display:inline-block;background:#EFE2D8;color:var(--brand);border-radius:20px;padding:2px 9px;font-size:11px;font-weight:700}
+.note{color:var(--muted);font-size:12px;margin-top:8px}canvas{max-height:300px}
+@media(max-width:900px){.kpis{grid-template-columns:repeat(2,1fr)}.grid2{grid-template-columns:1fr}}
+</style></head><body>
+<div id="gate"><div class="box"><div class="logo">Fit</div><h2>Painel Fit4You</h2><p>Este painel contem dados de clientes. Digite a senha para acessar.</p>
+<input id="pw" type="password" placeholder="Senha" autofocus onkeydown="if(event.key==='Enter')unlock()">
+<button onclick="unlock()">Entrar</button><div class="err" id="err"></div></div></div>
+<div class="wrap" id="app" style="display:none">
+<header><div class="logo">Fit</div><div><h1>Fit4You — Inteligencia do Negocio</h1><div class="sub">Fonte: painel cardapio.ai &middot; Atualizado em 09/07/2026</div></div></header>
+<div class="kpis" id="kpis"></div>
+<div class="section-title">Historico de faturamento</div>
+<div class="card"><h3>Faturamento por mes (todos os meses com venda)</h3><canvas id="chFat"></canvas><div class="note">Acumulado R$ 112.073,86. Pico em marco/2026. 07/2026 e mes parcial.</div></div>
+<div class="section-title">Produtos e kits</div>
+<div class="grid2"><div class="card"><h3>Kits mais vendidos (receita, 3 meses)</h3><canvas id="chKit"></canvas></div><div class="card"><h3>Pratos mais vendidos (quantidade, 3 meses)</h3><canvas id="chPra"></canvas></div></div>
+<div class="section-title">Clientes &amp; recorrencia</div>
+<div class="grid2"><div class="card"><h3>Distribuicao de recorrencia (3 meses)</h3><canvas id="chRec"></canvas><div class="note">63% compraram 1x &middot; 37% recorrentes &middot; media 2,2x.</div></div><div class="card"><h3>Formas de pagamento (3 meses)</h3><canvas id="chPag"></canvas></div></div>
+<div class="grid2" style="margin-top:16px"><div class="card"><h3>Top 10 clientes por valor</h3><table id="tbVal"></table></div><div class="card"><h3>Top 10 clientes por pedidos</h3><table id="tbPed"></table></div></div>
+<div class="section-title">Regioes</div><div class="card"><h3>Bairros que mais compram (amostra 142 pedidos)</h3><canvas id="chReg"></canvas></div>
+<div class="section-title">Reativacao</div><div class="card"><h3>135 clientes inativos <span class="tag">oportunidade</span></h3><div class="note" style="margin-bottom:10px">Amostra dos 20 mais recentes (lista completa na planilha):</div><table id="tbIna"></table></div>
+</div>
+<script>
+var BLOB="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";
+function unlock(){
+ var pw=document.getElementById('pw').value;
+ try{
+  var txt=CryptoJS.AES.decrypt(BLOB,pw).toString(CryptoJS.enc.Utf8);
+  if(!txt){throw 0;}
+  var D=JSON.parse(txt);
+  document.getElementById('gate').style.display='none';
+  document.getElementById('app').style.display='block';
+  render(D);
+ }catch(e){document.getElementById('err').textContent='Senha incorreta';}
+}
+function render(D){
+ var BRAND='#AC6C4C',B2='#C88A63',B3='#D9A87F';
+ var money=function(v){return 'R$ '+v.toLocaleString('pt-BR',{minimumFractionDigits:2,maximumFractionDigits:2});};
+ var money0=function(v){return 'R$ '+v.toLocaleString('pt-BR',{maximumFractionDigits:0});};
+ var kpis=[['Faturamento total',money0(D.kpi.faturamento_total),'todos os tempos'],['Total de pedidos',D.kpi.total_pedidos.toLocaleString('pt-BR'),D.kpi.delivery+' delivery'],['Clientes totais',D.kpi.clientes_totais,'base cadastrada'],['Ticket medio',money(D.kpi.ticket_medio),'por pedido'],['Faturamento 3 meses',money0(D.rel3m.faturamento_total),D.rel3m.pedidos_entrega+' pedidos'],['Economia com taxas',money0(D.kpi.economia_taxas),'vs. plataformas'],['Recorrentes','54','de 151 (36%)'],['Inativos p/ reativar','135','2+ meses']];
+ document.getElementById('kpis').innerHTML=kpis.map(function(k){return '<div class="kpi"><div class="l">'+k[0]+'</div><div class="v">'+k[1]+'</div><div class="s">'+k[2]+'</div></div>';}).join('');
+ new Chart(chFat,{type:'bar',data:{labels:D.meses,datasets:[{data:D.fat,backgroundColor:BRAND,borderRadius:6}]},options:{plugins:{legend:{display:false},tooltip:{callbacks:{label:function(c){return money(c.raw);}}}},scales:{y:{ticks:{callback:function(v){return money0(v);}}}}}});
+ new Chart(chKit,{type:'bar',data:{labels:D.kit_l,datasets:[{data:D.kit_v,backgroundColor:B2,borderRadius:5}]},options:{indexAxis:'y',plugins:{legend:{display:false},tooltip:{callbacks:{label:function(c){return money(c.raw)+' ('+D.kit_q[c.dataIndex]+' un)';}}}},scales:{x:{ticks:{callback:function(v){return money0(v);}}}}}});
+ new Chart(chPra,{type:'bar',data:{labels:D.pra_l,datasets:[{data:D.pra_q,backgroundColor:B3,borderRadius:5}]},options:{indexAxis:'y',plugins:{legend:{display:false},tooltip:{callbacks:{label:function(c){return c.raw+' un - '+money(D.pra_v[c.dataIndex]);}}}}}});
+ new Chart(chRec,{type:'bar',data:{labels:D.rec_l,datasets:[{data:D.rec_v,backgroundColor:BRAND,borderRadius:5}]},options:{plugins:{legend:{display:false}}}});
+ new Chart(chPag,{type:'doughnut',data:{labels:D.pag_l,datasets:[{data:D.pag_v,backgroundColor:[BRAND,B2,B3]}]},options:{plugins:{legend:{position:'bottom'},tooltip:{callbacks:{label:function(c){return c.label+': '+money(c.raw);}}}}}});
+ new Chart(chReg,{type:'bar',data:{labels:D.reg_l,datasets:[{data:D.reg_v,backgroundColor:B2,borderRadius:5}]},options:{plugins:{legend:{display:false}}}});
+ document.getElementById('tbVal').innerHTML='<tr><th>#</th><th>Cliente</th><th>Telefone</th><th>Gasto</th></tr>'+D.topval.map(function(c,i){return '<tr><td>'+(i+1)+'</td><td>'+c[0]+'</td><td>'+c[1]+'</td><td>'+money(c[3])+'</td></tr>';}).join('');
+ document.getElementById('tbPed').innerHTML='<tr><th>#</th><th>Cliente</th><th>Telefone</th><th>Pedidos</th></tr>'+D.topped.map(function(c,i){return '<tr><td>'+(i+1)+'</td><td>'+c[0]+'</td><td>'+c[1]+'</td><td>'+c[2]+'</td></tr>';}).join('');
+ document.getElementById('tbIna').innerHTML='<tr><th>#</th><th>Cliente</th><th>Telefone</th><th>Ultima compra</th></tr>'+D.inativos_top.map(function(c,i){return '<tr><td>'+(i+1)+'</td><td>'+c[0]+'</td><td>'+c[1]+'</td><td>'+c[2]+'</td></tr>';}).join('');
+}
+</script></body></html>
