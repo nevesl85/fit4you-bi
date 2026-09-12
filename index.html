@@ -42,7 +42,7 @@ table{width:100%;border-collapse:collapse;font-size:13px}th{background:var(--bra
 <input id="pw" type="password" placeholder="Senha" autofocus onkeydown="if(event.key==='Enter')unlock()">
 <button onclick="unlock()">Entrar</button><div class="err" id="err"></div></div></div>
 <div class="wrap" id="app" style="display:none">
-<header><div class="logo">Fit</div><div><h1>Fit4You — Inteligencia do Negocio</h1><div class="sub">Fonte: painel cardapio.ai &middot; Atualizado em 10/09/2026</div></div></header>
+<header><div class="logo">Fit</div><div><h1>Fit4You — Inteligencia do Negocio</h1><div class="sub">Fonte: painel cardapio.ai &middot; Atualizado em 11/09/2026</div></div></header>
 <div style="margin-top:12px"><button class="dlbtn" onclick="baixarXlsx()">📊 Baixar planilha completa (Excel)</button> <span class="dlnote">clientes, inativos, produtos, tracker da campanha e mais</span></div>
 <div class="kpis" id="kpis"></div>
 <div id="camp"></div>
@@ -55,7 +55,7 @@ table{width:100%;border-collapse:collapse;font-size:13px}th{background:var(--bra
 <div class="card" id="bench" style="margin-bottom:16px"></div>
 <div class="grid2"><div class="card"><h3>Fidelizacao &middot; pedidos por cliente ao longo da vida</h3><canvas id="chRec"></canvas><div class="note">Base completa: 377 clientes, 729 pedidos (21/08/2025 a 04/09/2026). Entre os 250 clientes com 90+ dias de base (tempo real de repetir): <b>recorrencia vitalicia 2,15x</b>, 34,4% recompram em ate 90 dias, 24,0% chegam a 3+ pedidos. Os 75 fidelizados (20% da base) valem 53% da receita &mdash; R$ 1.209,63 por cliente contra R$ 210,55 de quem parou no 1o pedido. <i>Medido por coorte de entrada, e nao por pedidos&divide;clientes: nesta ultima todo cliente novo entra com 1 pedido e derruba a media, fazendo captacao virar falsa queda de fidelizacao.</i></div></div><div class="card"><h3>Formas de pagamento (3 meses)</h3><canvas id="chPag"></canvas></div></div>
 <div class="grid2" style="margin-top:16px"><div class="card"><h3>Top 10 clientes por valor <span style="font-weight:400;opacity:.65;font-size:.85em">&middot; histórico</span></h3><table id="tbVal"></table></div><div class="card"><h3>Top 10 clientes por pedidos <span style="font-weight:400;opacity:.65;font-size:.85em">&middot; histórico</span></h3><table id="tbPed"></table></div></div>
-<div class="section-title">Regioes</div><div class="card"><h3>Bairros que mais compram (amostra 304 pedidos)</h3><canvas id="chReg"></canvas></div>
+<div class="section-title">Regioes</div><div class="card"><h3>Bairros que mais compram (amostra 306 pedidos)</h3><canvas id="chReg"></canvas></div>
 <div class="section-title">Reativacao</div><div class="card"><h3>187 clientes inativos <span class="tag">top 20</span></h3><div class="note" style="margin-bottom:10px">Ordenados do mais recente ao mais antigo. "O que comprou" = itens do ultimo pedido concluido no painel.</div><div style="max-height:440px;overflow-y:auto;border:1px solid var(--line);border-radius:10px"><table id="tbIna" style="font-size:12px"></table></div></div>
 </div>
 <script src="dados.js"></script>
